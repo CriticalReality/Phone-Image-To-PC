@@ -1,19 +1,26 @@
 <!doctype html>
-<html>
-<head><meta charset="utf-8"><title>Wi-Fi File Transfer</title></head>
+<html><head><meta charset="utf-8"><title>Sender</title></head>
 <body>
+<h2>Phone Sender</h2>
+<p>Enter verification code from receiver:</p>
+<input type="text" id="vcode" maxlength="6">
+<button id="verify">Verify</button>
+<div id="panel" style="display:none;">
   <input type="file" id="file" multiple>
   <button id="upload">Upload</button>
-  <script>
-    upload.onclick = async () => {
-      const files = file.files;
-      for (const f of files) {
-        const fd = new FormData();
-        fd.append("file", f);
-        await fetch("https://<PC-IP>:8443/upload", { method: "POST", body: fd });
-      }
-      alert("Transfer complete.");
-    };
-  </script>
-</body>
-</html>
+</div>
+<script>
+verify.onclick=async()=>{
+  const r=await fetch("/verify?code="+vcode.value,{method:"POST"});
+  if(r.ok){verify.disabled=true;panel.style.display="block";}
+};
+upload.onclick=async()=>{
+  for(const f of file.files){
+    const fd=new FormData();
+    fd.append("file",f);
+    await fetch("/upload",{method:"POST",body:fd});
+  }
+  alert("Transfer complete");
+};
+</script>
+</body></html>
